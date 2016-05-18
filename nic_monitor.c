@@ -32,14 +32,14 @@ int create_socket()
     int err;
 
     memset(&sa, 0, sizeof(sa));
-    sa.nl_family = AF_NETLINK;
-    sa.nl_groups = RTMGRP_LINK;
     fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
     if (fd <= 0) {
         LOGE("Failed opening netlink socket (%s)", strerror(errno));
         return 0;
     }
 
+    sa.nl_family = AF_NETLINK;
+    sa.nl_groups = RTMGRP_LINK;
     err = bind(fd, (struct sockaddr *) &sa, sizeof(sa));
     if (err < 0) {
         LOGE("Failed binding netlink socket (%s)", strerror(errno));
