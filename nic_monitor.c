@@ -21,35 +21,6 @@
 #define WAIT_FOREVER (-1)
 
 /**
- * Create a socket and bind it to NL RT family address.
- *
- * Returns: Socket fd on success, negative value on faliure.
- */
-int create_socket()
-{
-    struct sockaddr_nl sa;
-    int fd = 0;
-    int err;
-
-    memset(&sa, 0, sizeof(sa));
-    fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
-    if (fd <= 0) {
-        LOGE("Failed opening netlink socket (%s)", strerror(errno));
-        return 0;
-    }
-
-    sa.nl_family = AF_NETLINK;
-    sa.nl_groups = RTMGRP_LINK;
-    err = bind(fd, (struct sockaddr *) &sa, sizeof(sa));
-    if (err < 0) {
-        LOGE("Failed binding netlink socket (%s)", strerror(errno));
-        return 0;
-    }
-    
-    return fd;
-}
-
-/**
  * Browse through the RT attribute of a message
  * and find the attribute containing the if name
  *
@@ -134,6 +105,35 @@ int wait_message(int fd)
     }
 
     return handle_message(buff, len);
+}
+
+/**
+ * Create a socket and bind it to NL RT family address.
+ *
+ * Returns: Socket fd on success, negative value on faliure.
+ */
+int create_socket()
+{
+    struct sockaddr_nl sa;
+    int fd = 0;
+    int err;
+
+    memset(&sa, 0, sizeof(sa));
+    fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
+    if (fd <= 0) {
+        LOGE("Failed opening netlink socket (%s)", strerror(errno));
+        return 0;
+    }
+
+    sa.nl_family = AF_NETLINK;
+    sa.nl_groups = RTMGRP_LINK;
+    err = bind(fd, (struct sockaddr *) &sa, sizeof(sa));
+    if (err < 0) {
+        LOGE("Failed binding netlink socket (%s)", strerror(errno));
+        return 0;
+    }
+    
+    return fd;
 }
 
 int main(int argv, char *argc[])
